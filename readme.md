@@ -10,7 +10,10 @@ RU:
 6. После того, как все игроки присоединились и готовы, первый игрок нажимает кнопку начала раунда.
 
 Дополнительная информация:
-Реализована простая система рейтинга. Чем меньше времени хода используется, тем больше прибавляется в следующем ходу, но не менее 5-ти секунд.
+    Реализована простая система рейтинга
+    Возможность менять настройки в Config.ini
+    Чем меньше времени хода используется, тем больше прибавляется в следующем ходу, но не менее 5-ти секунд
+
 
 ENG:
 This is a timer for the board game Dune: Imperium. It was created to ensure fairer time distribution among players.
@@ -24,4 +27,6 @@ Step-by-step guide:
 6. After all players have joined and are ready, the first player clicks the "Start Round" button.
 
 Additional Information:
-A simple rating system is implemented. The less time a player uses on their turn, the more time is added to their next turn, but no less than 5 seconds.
+    Settings in Config.ini file
+    A simple rating system is implemented
+    The less time a player uses on their turn, the more time is added to their next turn, but no less than 5 seconds
