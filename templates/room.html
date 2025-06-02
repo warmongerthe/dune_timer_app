@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+    <!-- <meta http-equiv="refresh" content="1"> -->
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ room_name }}</title>
+    <!-- Подключаем стили (опционально) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- СКРИПТ ДЛЯ АВТОМАТИЧЕСКОГО ОБНОВЛЕНИЯ СТРАНИЦЫ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script>const socket = io.connect(window.location.origin); // Подключение к WebSocket </script>
+    <script>let currentAudio = null; // Храним ссылку на текущий аудио </script>
+    
+    
+    
+    <p class="small-text">Статус игры: {{ global_status }} | раунд: {{ current_round }} | ход игрока: {{ global_current_player.username }} | время игры: {{ game_time }}</p>
+    <p class="small-text">Ваш статус: {{ current_player.status }} | имя: {{ current_player.username }} | позиция: {{ current_player.position }}</p>
+    
+    {% if global_status == "Ожидание игроков" and current_round == 0 %}
+        <ul class="medium-text" style= "color: rgb(126, 221, 165);">Игроки в комнате:
+            {% for player in players %}
+                <p style= "color: rgb(209, 216, 197);">{{ player.username }} ({{ player.position }})</p>
+            {% endfor %}
+        </ul>
+    {% elif global_status == "Ожидание игроков" and current_round > 0  and ENDGAME == False %}
+            <p class="large-text">Ожидание начала {{ current_round + 1 }} раунда</p>
+    {% endif %}
+    
+    {% if global_status == "Ожидание игроков" %}
+        {% if ENDGAME %}
+            {% if WINNER_WAS_CHOSEN %}
+                <p class="medium-text">ПОБЕДИТЕЛЬ</p> 
+                <p class="large-text" style= "color: rgb(221, 245, 11);">-= {{ player_who_win }} =-</p>
+                <p class="medium-text" style= "color: rgb(173, 69, 233);">Общее время игры: {{ '{0:0.0f}'.format(game_time / 60) }}м</p>
+                <p class="medium-text" style= "color: rgb(255, 226, 131);">Время битв: {{ '{0:0.0f}'.format(time_of_battles / 60) }}м</p>
+                <ul class="large-text" style= "color: rgb(126, 221, 165);">Статистика: <p class="small-text">(игрок | время игры | игр | % побед):</p>
+                    {% for player in players %}
+                        <p class="medium-text" style= "color: rgb(209, 216, 197);">{{ player.username }} | {{ '{0:0.0f}'.format(player.game_time / 60) }}м 
+                            | {{ player.total_games }} | {{ player.rating }}%</p>
+                    {% endfor %}
+                </ul>
+                {% if current_player.position == 1 %}
+                    <a href="{{ url_for('restart') }}"><button style="position: absolute; bottom: 5vh; right: 5vh; font-size: 2vh;">Рестарт</button></a>
+                {% endif %}        
+            {% else %}
+                <p class="large-text" style= "color: rgb(126, 221, 165);">Выберите победителя: </p>
+                <p class="medium-text">Вы выбрали: {{ current_player.choosed_winner }}</p>
+                <form action="{{ url_for('winner') }}" method="POST">
+                    {% for player in players %}
+                        <button type="submit" name="player" value="{{ player.username }}" style="width: 90%; height: 14vh;">{{ player.username }}</button>
+                    {% endfor %}
+                </form>
+            {% endif %} 
+            
+        {% elif current_player.ready == False and current_player.position == 1 %}
+            <p class="large-text" style=  "position: absolute; align-items: center; width: 100%; bottom: 20vh;  color: rgb(255, 0, 0);">Вы ходите первым!</p>
+
+            <a href="{{ url_for('start_game') }}"><button style="position: absolute; height: 10vh; bottom: 15vh; width: 90%; transform: translateX(-50%); 
+            ">Начать {{ current_round + 1 }} раунд</button></a>
+
+            {% if current_round > 0 and ENDGAME == False %}
+                <a href="{{ url_for('endgame') }}"><button style="position: absolute; bottom: 5vh; right: 5vh; font-size: 2vh;">Конец игры</button></a>
+            {% endif %}
+        
+        {% endif %}
+    {% endif %}
+
+    {% if global_status == "Ход Игроков" and current_player.active %}
+        <a href="{{ url_for('passed') }}"><button style="width: 90%; height: 30vh;">Конец хода</button></a>
+        <div id='timer'> {{ global_current_player.timer }} </div> <!-- Начальное значение таймера в секундах -->
+        <a href="{{ url_for('revealed') }}"><button style="width: 90%; height: 10vh;">Раскрылся</button></a>
+
+        <!-- !!!!!!!!!!!!!!!!!!!!!! ПРОВЕРКА ЗВУКОВЫХ СИГНАЛОВ !!!!!!!!!!!!!!!!!!!!!!!!! -->
+        {% for player in players %}
+            {% if current_player.uid == 1 %}
+                <script>socket.on('roundstart-1', (data) => {
+                    if (currentAudio && !currentAudio.paused) return; // Если есть активный звук И он не на паузе - выходим
+                    currentAudio = new Audio(data.url);currentAudio.play(); // создаём новый аудио и проигрываем его
+                    currentAudio.onended = () => {currentAudio = null;};}); // Автоматически очищаем ссылку после завершения
+                </script> 
+            {% elif current_player.uid == 2 %}
+            <script>socket.on('roundstart-2', (data) => {
+                if (currentAudio && !currentAudio.paused) return; // Если есть активный звук И он не на паузе - выходим
+                currentAudio = new Audio(data.url);currentAudio.play(); // создаём новый аудио и проигрываем его
+                currentAudio.onended = () => {currentAudio = null;};}); // Автоматически очищаем ссылку после завершения
+            </script> 
+            {% elif current_player.uid == 3 %}
+            <script>socket.on('roundstart-3', (data) => {
+                if (currentAudio && !currentAudio.paused) return; // Если есть активный звук И он не на паузе - выходим
+                currentAudio = new Audio(data.url);currentAudio.play(); // создаём новый аудио и проигрываем его
+                currentAudio.onended = () => {currentAudio = null;};}); // Автоматически очищаем ссылку после завершения
+            </script> 
+            {% elif current_player.uid == 4 %}
+            <script>socket.on('roundstart-4', (data) => {
+                if (currentAudio && !currentAudio.paused) return; // Если есть активный звук И он не на паузе - выходим
+                currentAudio = new Audio(data.url);currentAudio.play(); // создаём новый аудио и проигрываем его
+                currentAudio.onended = () => {currentAudio = null;};}); // Автоматически очищаем ссылку после завершения
+            </script> 
+            {% endif %} 
+        {% endfor %}    
+    {% else %}
+        {% if global_status != "Ожидание игроков" %}
+            <p class="large-text">Ход Игрока:</p>
+            <p class="large-text">{{ global_current_player.username }}</p>
+        {% endif %}
+    {% endif %}
+
+    {% if current_round == 0 and current_player.ready == False %}
+        <a href="{{ url_for('logout') }}"><button style="position: absolute; bottom: 5vh; right: 5vh;">Выход</button></a>
+    {% endif %}
+    
+
+
+    
+       
+
+    
+    <script>
+        // Добавьте в клиентский код проверку подключения
+        socket.on('connect', () => {
+            console.log('Connected to WebSocket!');
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from WebSocket!');
+        });
+
+        // Обработчик события принудительного обновления
+        socket.on('force_reload', () => {
+            console.log('Сервер требует обновления!');
+            location.reload(true);  // Принудительная перезагрузка
+        });
+    </script>
+
+    <!-- СКРИПТ ДЛЯ ТАЙМЕРА -->
+    <script>
+        // ИНИЦИАЛИЗАЦИЯ ИСПОЛЬЗОВАНИЯ ЗВУКОВ В РАЗНЫХ ЗНАЧЕНИЯХ ТАЙМЕРА
+        socket.on('time_is_up', (data) => {audio_tiu = new Audio(data.url);audio_tiu.loop = true;audio_tiu.muted = true;audio_tiu.play();}); 
+        let audio_tiu = null; // Глобальная переменная для хранения аудио time is up
+        let audio_tiu_IS_PLAYING = false // переменная проверки старта звука сначала т.к. он воспроизводится на фоне muted
+
+        // Запуск звука в бесконечном цикле, но muted (обход блокировки браузеров)
+        socket.on('the_last_sec', (data) => {audio_tls = new Audio(data.url);audio_tls.loop = true;audio_tls.muted = true;audio_tls.play();}); 
+        let audio_tls = null; // Глобальная переменная для хранения аудио the_last_sec
+        let audio_tls_IS_PLAYING = false // переменная проверки старта звука сначала т.к. он воспроизводится на фоне muted
+         
+         
+        // ============================================================================================
+
+        const timerElement = document.getElementById('timer');
+        // Прочитать значение из HTML
+        let countdownTime = parseInt(timerElement.textContent); // Число из содержимого div
+        function getBackgroundColor(time, audio_tiu) {
+            if (time > 20) return 'hsl(120, 45%, 45%)'; // Зеленый
+            if (time > 10) {
+                // Плавный переход от зеленого (120°) к желтому (60°)
+                const hue = 120 - ((40 - time) * 3); // 120-60 за 10 шагов (20-10)
+                return `hsl(${hue}, 45%, 45%)`;
+            }
+            // Плавный переход от желтого (60°) к красному (0°)
+            const hue = 20 - ((10 - time) * 3); // 60-0 за 10 шагов (10-0)
+            return `hsl(${hue}, 60%, 45%)`;
+        }
+        
+        // Установить начальный цвет
+        document.body.style.backgroundColor = getBackgroundColor(countdownTime);
+        
+        //socket.on('time_is_up', (data) => {const audio = new Audio(data.url);audio.play();});
+        
+        // Запустить обратный отсчет
+        const timerInterval = setInterval(() => {
+            countdownTime--;
+            timerElement.textContent = countdownTime; // Обновляем содержимое div
+            // Обновить цвет фона
+            document.body.style.backgroundColor = getBackgroundColor(countdownTime);
+            
+            // снимаем флаг muted с audio_tiu для воспроизведения в конце хода
+            if (countdownTime <= 10 && audio_tiu_IS_PLAYING == false){
+                audio_tiu.muted = false;
+                audio_tiu.currentTime = 0;
+                audio_tiu_IS_PLAYING = true;
+                audio_tiu.loop = false;
+            }
+            // снимаем флаг muted с audio_tls для воспроизведения в конце хода
+            if (countdownTime <= 2 && audio_tls_IS_PLAYING == false){
+                audio_tls.muted = false;
+                audio_tls.currentTime = 0;
+                audio_tls_IS_PLAYING = true;
+                audio_tls.loop = false;
+            }
+            
+
+            if (countdownTime <= 0) {
+                clearInterval(timerInterval);
+                window.location.replace("{{ url_for('revealed') }}");
+                //alert("Время вышло!");
+            }
+        }, 1000);
+
+    </script>
+</body>
+</html>

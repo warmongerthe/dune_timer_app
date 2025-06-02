@@ -1,0 +1,75 @@
+button {
+    padding: 10px 20px;
+    background-color: #3b443b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 5vh;
+    
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+body {
+    /*background: linear-gradient(to bottom, #121212, #1e1e1e); /* Градиент от темного к более светлому */
+    background: #1e1e1e;
+    transition: background-color 1s ease;
+    margin: 0; /* Убираем отступы по умолчанию */
+    height: 97vh; /* Высота 100% от высоты видимой области экрана */
+    align-items: center; /* Центрируем по вертикали */
+    box-sizing: border-box; /* Учитывать отступы и границы в размерах */
+    text-align: center; /* Выравнивание текста по центру */
+    color: #ffffff; /* Цвет текста для контраста */
+    font-family: Arial, sans-serif; /* Шрифт */
+}
+
+table {
+    width: 100%; /* Устанавливаем ширину таблицы на 100% */
+    border-collapse: collapse; /* Убираем двойные границы */
+}
+th, td {
+    border: 1px solid #12d49a4b; /* Границы ячеек */
+    padding: 8px; /* Отступы внутри ячеек */
+    text-align: left; /* Выравнивание текста в ячейках */
+}
+th {
+    background-color: #3b443b; /* Фоновый цвет заголовков */
+}
+
+.large-text {
+    font-size: 5vh; /* Размер текста 5% от высоты экрана */
+}
+
+.medium-text {
+    font-size: 3vh; /* Размер текста 3% от высоты экрана */
+}
+
+.small-text {
+    font-size: 1.5vh; /* Размер текста 2% от высоты экрана */
+}
+
+ul {
+    list-style-type: none; /* Убираем маркеры списка */
+    padding: 0; /* Убираем отступы */
+    margin: 0; /* Убираем внешние отступы */
+}
+
+li {
+    display: inline; /* Отображаем элементы списка в строку */
+    margin-right: 10px; /* Добавляем отступ между элементами */
+}
+
+#timer {
+    display: flex;
+    justify-content: center; /* Центрирование по горизонтали */
+    align-items: center; /* Центрирование по вертикали */
+    height: 30vh; /* Высота на весь экран */
+    margin: 0; /* Убираем отступы */
+    font-size: 12em; /* Размер шрифта (по желанию) */
+    padding: 20px; /* Отступы вокруг таймера (по желанию) */
+    
+    border-radius: 10px; /* Закругление углов (по желанию) */
+}

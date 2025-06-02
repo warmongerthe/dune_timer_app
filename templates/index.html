@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная</title>
+    <!-- Подключаем стили (опционально) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1 style="text-align: center;">Dune: Imperium (web timer)</h1>
+    <form action="{{ url_for('login') }}" method="POST">
+        <input type="text" name="username" placeholder="Ваше имя" required style="width: 100%; height: 8vh; box-sizing: border-box;"><br>
+        <input type="number" name="position" placeholder="Позиция в игре" min="1" max="6" step="1" required style="width: 100%; height: 8vh; box-sizing: border-box;"><br>
+        <button type="submit" style="width: 100%; height: 14vh; box-sizing: border-box;">Войти</button>
+    </form>
+    <p>Version {{ app_version }}</p>
+    <p class="medium-text" style= "color: rgb(126, 221, 165);">Рейтинг: </p>
+    <table>
+        <thead>
+            <tr>
+                <th>Позиция</th>
+                <th>Имя</th>
+                <th>Игр</th>
+                <th>Побед</th>
+                <th>% Побед</th>
+            </tr>
+        </thead>
+        
+        <tbody>
+            {% for player in global_ratings %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ player[0] }}</td>
+                    <td>{{ player[1] }}</td>
+                    <td>{{ player[2] }}</td>
+                    <td>{{ player[3] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+</body>
+</html>

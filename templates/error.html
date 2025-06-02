@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ОШИБКА</title>
+    <!-- Подключаем стили (опционально) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>ОШИБКА:</h1>
+    <p>{{ error }}</p>
+
+    <a href="{{ url_for('logout') }}"><button>Выйти</button></a>
+</body>
+</html>
