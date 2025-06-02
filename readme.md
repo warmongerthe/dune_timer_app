@@ -10,9 +10,9 @@ RU:
 6. После того, как все игроки присоединились и готовы, первый игрок нажимает кнопку начала раунда.
 
 Дополнительная информация:
-    Реализована простая система рейтинга
-    Возможность менять настройки в Config.ini
-    Чем меньше времени хода используется, тем больше прибавляется в следующем ходу, но не менее 5-ти секунд
+1. Реализована простая система рейтинга
+2. Возможность менять настройки в Config.ini
+3. Чем меньше времени хода используется, тем больше прибавляется в следующем ходу, но не менее 5-ти секунд
 
 
 ENG:
@@ -26,7 +26,7 @@ Step-by-step guide:
 5. After players have manually determined their seating positions, they enter their name and position and click the "Login" button.
 6. After all players have joined and are ready, the first player clicks the "Start Round" button.
 
-Additional Information:
-    Settings in Config.ini file
-    A simple rating system is implemented
-    The less time a player uses on their turn, the more time is added to their next turn, but no less than 5 seconds
+Additional Information: 
+1. Settings in Config.ini file.
+2. A simple rating system is implemented.
+3. The less time a player uses on their turn, the more time is added to their next turn, but no less than 5 seconds.
